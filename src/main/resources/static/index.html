@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/sockjs/latest/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+
+<body>
+    <h1>WebSocket Client</h1>
+    <button onclick="sendMessage()">Send Message</button>
+    <div class="list"></div>
+    <script>
+        let stompClient = null;
+
+        const socket = new SockJS('http://localhost:8082/ws');
+        stompClient = Stomp.over(socket);
+
+        // Проверяем куки
+        let userId = document.cookie.split('; ').find(row => row.startsWith('userId='));
+        if (userId) {
+            userId = userId.split('=')[1];
+        } else {
+            userId = null;
+        }
+
+        stompClient.connect({}, () => {
+            console.log('Connected!');
+            // Слушаем ответ от сервера
+
+            stompClient.send('/app/connect', {}, JSON.stringify({ userId }));
+
+            stompClient.subscribe('/topic/response', (message) => {
+                console.log('Received:', message.body);
+                console.log('message:', message);
+
+                const list = document.querySelector('.list');
+                const listItem = document.createElement('li');
+                listItem.textContent = message.body;
+                list.appendChild(listItem);
+            });
+        }, (error) => {
+            console.error('Connection error:', error);
+        });
+
+        function sendMessage() {
+            if (stompClient && stompClient.connected) {
+                stompClient.send('/app/send', {}, 'Hello from Client!');
+            } else {
+                console.error('Cannot send message: stompClient is not connected');
+            }
+        }
+
+    </script>
+</body>
+
+</html>

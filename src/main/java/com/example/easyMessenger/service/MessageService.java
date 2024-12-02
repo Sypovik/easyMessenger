@@ -13,6 +13,11 @@ public class MessageService {
         messages.add(message);
     }
 
+    // Show all messages
+    public String getMessages() {
+        return messages.isEmpty() ? "No messages yet!" : messages.toString();
+    }
+
     public String getLastMessage() {
         return messages.isEmpty() ? "No messages yet!" : messages.get(messages.size() - 1);
     }
