@@ -29,7 +29,9 @@
             console.log('Connected!');
             // Слушаем ответ от сервера
 
-            stompClient.send('/app/connect', {}, JSON.stringify({ userId }));
+            // stompClient.send('/app/connect', {}, JSON.stringify({ userId }));
+
+            sendMessage();
 
             stompClient.subscribe('/topic/response', (message) => {
                 console.log('Received:', message.body);
@@ -46,11 +48,13 @@
 
         function sendMessage() {
             if (stompClient && stompClient.connected) {
-                stompClient.send('/app/send', {}, 'Hello from Client!');
+                const message = JSON.stringify({ message: 'Hello from Client!' });
+                stompClient.send('/app/send', {}, message);
             } else {
                 console.error('Cannot send message: stompClient is not connected');
             }
         }
+
 
     </script>
 </body>

@@ -1,17 +1,19 @@
 package com.example.easyMessenger.controller;
 
-import com.example.easyMessenger.service.MessageService;
+import com.example.easyMessenger.service.PleerService;
+
+import java.util.Map;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class MessageController {
-    private final MessageService messageService;
+public class PleerController {
+    private final PleerService pleerService;
 
-    public MessageController(MessageService messageService) {
-        this.messageService = messageService;
+    public PleerController(PleerService pleerService) {
+        this.pleerService = pleerService;
     }
 
     // @MessageMapping("/connect")
@@ -32,9 +34,8 @@ public class MessageController {
 
     @MessageMapping("/send")
     @SendTo("/topic/response")
-    public String handleMessage(String message) {
-        messageService.saveMessage(message);
-        return "Received your message: \"" + message + "\". Last saved message: \"" + messageService.getMessages()
-                + "\".";
+    public Map<String, Object> handleMessage(Map<String, Object> message) {
+        System.out.println("message: " + message);
+        return message;
     }
 }
